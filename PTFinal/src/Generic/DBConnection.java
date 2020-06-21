@@ -3,17 +3,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DBConnection {
-	public static Connection getFailedCon() {
-			try {
-                Class.forName("oracle.jdbc.driver.OracleDriver");
-                return DriverManager.getConnection("jdbc:oracle:thin:@(DESCRIPTION=(SDU=32767)(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.20)(PORT=1521))(CONNECT_DATA=(SID=noncdb)(SERVER=DEDICATED)))","asdf","asdf");
-			}
-        catch(Exception E) {
-        	System.out.println("Failed Once");
-               return null;
-        	}
-        }
-	public	static Connection getOraConn() {
+
+	public static Connection getOraConn() {
                 try {
                         Class.forName("oracle.jdbc.driver.OracleDriver");
                         return DriverManager.getConnection("jdbc:oracle:thin:@(DESCRIPTION=(SDU=32767)(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.20)(PORT=1521))(CONNECT_DATA=(SID=noncdb)(SERVER=DEDICATED)))","vishnu","oracle");
@@ -29,7 +20,7 @@ public class DBConnection {
                         return null;
                 }
         } 
-	public   static Connection getOraSysConn() {
+	public static Connection getOraSysConn() {
             try {
                     Class.forName("oracle.jdbc.driver.OracleDriver");
                     return DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.20:1521:noncdb","sys as sysdba","oracle");
@@ -45,4 +36,15 @@ public class DBConnection {
                     return null;
             }
     } 
+	
+	public static Connection getFailedCon() {
+		try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            return DriverManager.getConnection("jdbc:oracle:thin:@(DESCRIPTION=(SDU=32767)(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.20)(PORT=1521))(CONNECT_DATA=(SID=noncdb)(SERVER=DEDICATED)))","asdf","asdf");
+		}
+    catch(Exception E) {
+    	System.out.println("Failed Once");
+           return null;
+    	}
+    }
 }
