@@ -1,7 +1,9 @@
 package Statistics;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import Generic.DBConnection;
@@ -47,9 +49,62 @@ public class SystemStatistics {
 				}
 				i++;
 			}
+			pstmt.executeBatch();
+			pstmt.close();
+			oraCon.close();
 		}
 		catch(Exception E) {
 			E.printStackTrace();
 		}
 	}
+	
+	
+	void gatherStart() {
+		try {
+			Connection oraCon = DBConnection.getOraConn();
+			CallableStatement cstmt = oraCon.prepareCall ("{call dbms_stats.gather_system_stats('START')}");
+			cstmt.executeUpdate();
+			oraCon.close();
+			System.out.println("Starting System Statistics Gathering!");
+		}
+		catch(Exception E) {
+			E.printStackTrace();
+		}
+	}
+	
+	void gatherStop() {
+		try {
+			Connection oraCon = DBConnection.getOraConn();
+			CallableStatement cstmt = oraCon.prepareCall ("{call dbms_stats.gather_system_stats('STOP')}");
+			cstmt.executeUpdate();
+			oraCon.close();
+			System.out.println("Stopping System Statistics Gathering!");
+		}
+		catch(Exception E) {
+			E.printStackTrace();
+		}
+	}
+	
+	void listSystemStats() {
+		try {
+			Connection oraCon = DBConnection.getOraSysConn();
+			Statement stmt = oraCon.createStatement();
+			String SQL = "select pname,pval1 from sys.aux_stats$";
+			ResultSet rs = stmt.executeQuery(SQL);
+			String temp1;
+			while(rs.next()) {
+				temp1 = rs.getString(1);
+				if (temp1.length()!=20) {
+					System.out.println(temp1 + OraRandom.spaces(20-temp1.length()) + " --> " + rs.getString(2));
+				}
+			}
+			rs.close();
+			stmt.close();
+			oraCon.close();
+		}
+		catch(Exception E) {
+			E.printStackTrace();
+		}
+	}
+	
 }

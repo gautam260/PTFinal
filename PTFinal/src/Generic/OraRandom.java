@@ -46,5 +46,17 @@ public class OraRandom {
 	    }
 	    return buffer.toString();
 	}
+	
+	
+	public static String spaces(int a) {
+		StringBuilder buffer = new StringBuilder(a);
+		int i = 1;
+		while (i <= a) {
+			buffer.append(' ');
+			i++;
+		}
+		return buffer.toString();
+	}
 }
+
 //random Date: to_date(trunc(dbms_random.value(2458485,2458849)),'J')
