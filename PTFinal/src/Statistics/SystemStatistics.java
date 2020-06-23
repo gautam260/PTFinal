@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import Generic.DBConnection;
 import Generic.OraRandom;
@@ -17,11 +19,94 @@ public class SystemStatistics {
 		loadTable();
 	}
 	
+	public void run() {
+		displayStats();
+		gatherStart();
+		ExecutorService asd = Executors.newFixedThreadPool(10);
+		int i = 0;
+		int randValue = OraRandom.randomUniformInt(10);
+		while (i < randValue) {
+			asd.submit(new IndexLoad());
+			i++;
+		}
+		i = 0;
+		while (i < (10 - randValue)) {
+			asd.submit(new FullLoad());
+			i++;
+		}
+	}
+	
+	class IndexLoad implements Runnable{
+		public void run() {
+			try {
+				Connection oraCon = DBConnection.getOraConn();
+			//	oraCon.setClientInfo("ApplicationName", "IndexLoad");
+				System.out.println("Running IndexLoad " + Thread.currentThread().getName());
+				Statement stmt = oraCon.createStatement();
+				ResultSet rs = stmt.executeQuery("select max(t1) from systemstats");
+				int MAXVALUE = 0;
+				while (rs.next()) {
+					MAXVALUE = rs.getInt(1);
+				}
+				int i = 0;
+				stmt.close();
+				rs.close();
+				PreparedStatement pstmt = oraCon.prepareStatement("select avg(length(t2)) from systemstats where t1 = ?");
+				while (i < 10000) {
+					pstmt.setInt(1, OraRandom.randomUniformInt(MAXVALUE));
+					rs = pstmt.executeQuery();
+					while (rs.next()) {
+						rs.getInt(1);
+					}
+					rs.close();
+					
+					i++;
+				}
+				pstmt.close();
+				oraCon.close();
+				
+			}
+			catch(Exception E) {
+				E.printStackTrace();
+			}
+		}
+	}
+	
+	class FullLoad implements Runnable{
+		public void run() {
+			try {
+				Connection oraCon = DBConnection.getOraConn();
+			//	oraCon.setClientInfo("ApplicationName", "FullLoad");
+				System.out.println("Running FullLoad " + Thread.currentThread().getName());
+				ResultSet rs ;
+				PreparedStatement pstmt = oraCon.prepareStatement("select avg(length(t2)) from systemstats");
+				int i = 0;
+				while (i < 10000) {
+					rs = pstmt.executeQuery();
+					while (rs.next()) {
+						rs.getInt(1);
+					}
+					rs.close();
+					
+					i++;
+				}
+				pstmt.close();
+				oraCon.close();
+				
+			}
+			catch(Exception E) {
+				E.printStackTrace();
+			}
+		}
+	}
+	
+	
 	
 	void createTable() {
 		try {
 			Connection oraCon = DBConnection.getOraConn();
 			Statement stmt = oraCon.createStatement();
+			System.out.println("Creating Table");
 			String SQL = "create table systemstats(t1 number primary key, t2 varchar2(3000), t3 varchar2(3000))";
 			stmt.execute(SQL);
 			stmt.close();
@@ -35,10 +120,11 @@ public class SystemStatistics {
 	void loadTable() {
 		try {
 			Connection oraCon = DBConnection.getOraConn();
+			System.out.println("Loading Table");
 			String SQL = "insert into systemstats(t1, t2, t3) values (?,?,?)";
 			PreparedStatement pstmt = oraCon.prepareStatement(SQL);
 			int i = 1 ; 
-			while (i < 200000) {
+			while (i < 250000) {
 				pstmt.setInt(1, oraSequence.nextVal());
 				pstmt.setString(2, OraRandom.randomString(3000));
 				pstmt.setString(3, OraRandom.randomString(3000));
@@ -85,7 +171,7 @@ public class SystemStatistics {
 		}
 	}
 	
-	void listSystemStats() {
+	public void displayStats() {
 		try {
 			Connection oraCon = DBConnection.getOraSysConn();
 			Statement stmt = oraCon.createStatement();

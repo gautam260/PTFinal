@@ -1,10 +1,10 @@
 package Generic;
 
-import Statistics.SystemStatistics;
+import FullScan.ChainedRows;
 
 public class Start {
 	public static void main(String[] args) {
-		SystemStatistics a = new SystemStatistics();
-		a.init();
+		ChainedRows a = new ChainedRows();
+		a.LoadTable();
 	}
 }
