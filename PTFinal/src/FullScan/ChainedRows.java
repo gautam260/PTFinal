@@ -13,15 +13,30 @@ import Generic.oraSequence;
 public class ChainedRows {
 
 	
+	@SuppressWarnings("static-access")
 	public void LoadTable() {
-		createTable();
+		try {
+			createTable();
 			ExecutorService asd = Executors.newFixedThreadPool(10);
 			int i = 0;
 			while (i < 10) {
 				asd.submit(new InsertData());
 				i++;
 			}
+			asd.shutdown();
+			
+			while(!asd.isTerminated()) {
+				Thread.currentThread().sleep(1000);
+				System.out.print(".");
+			}
+			asd.shutdownNow();
+		}
+		catch(Exception E) {
+			E.printStackTrace();
+		}
 	}
+	
+	
 	
 	void createTable() {
 		try {
