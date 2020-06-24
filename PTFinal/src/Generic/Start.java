@@ -1,10 +1,10 @@
 package Generic;
 
-import FullScan.ChainedRows;
+import IndexScan.One10Percent;
 
 public class Start {
 	public static void main(String[] args) {
-		ChainedRows a = new ChainedRows();
-		a.LoadTable();
+		One10Percent a = new One10Percent();
+		a.createSchema();
 	}
 }
