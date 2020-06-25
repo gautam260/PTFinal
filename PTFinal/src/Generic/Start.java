@@ -1,10 +1,10 @@
 package Generic;
 
-import IndexScan.One10Percent;
+import IndexScan.UniqueNonunique;
 
 public class Start {
 	public static void main(String[] args) {
-		One10Percent a = new One10Percent();
-		a.createSchema();
+		UniqueNonunique a = new UniqueNonunique();
+		a.run();
 	}
 }
