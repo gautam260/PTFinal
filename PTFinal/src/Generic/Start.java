@@ -4,7 +4,8 @@ import IndexScan.UniqueNonunique;
 
 public class Start {
 	public static void main(String[] args) {
-		UniqueNonunique a = new UniqueNonunique();
+		InsertOraSequence a = new InsertOraSequence();
+		a.init();
 		a.run();
 	}
 }

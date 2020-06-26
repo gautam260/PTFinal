@@ -48,7 +48,7 @@ public class UniqueNonunique {
 				String SQL = "select * from unique1 where student_id = 25231";
 				int i = 0 ;
 				ResultSet rs;
-				while (i < 50000) {
+				while (i < 10000) {
 					rs = stmt.executeQuery(SQL);
 					while(rs.next()) {
 						rs.getInt(3);
