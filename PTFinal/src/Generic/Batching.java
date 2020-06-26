@@ -9,6 +9,7 @@ public class Batching {
 
 	void updateLoad() {
 		try {
+			System.out.println("Started Update Load " + Thread.currentThread().getName());
 			Connection oraCon = DBConnection.getOraConn();
 			Statement stmt  = oraCon.createStatement();
 			String SQL = "select max(student_id) from batching";
@@ -40,6 +41,7 @@ public class Batching {
 	
 	void deleteLoad() {
 		try {
+			System.out.println("Started Delete Load " + Thread.currentThread().getName());
 			Connection oraCon = DBConnection.getOraConn();
 			Statement stmt  = oraCon.createStatement();
 			String SQL = "select max(student_id) from batching";
@@ -70,40 +72,12 @@ public class Batching {
 	
 	
 	
-	void selectLoad() {
-		try {
-			Connection oraCon = DBConnection.getOraConn();
-			Statement stmt  = oraCon.createStatement();
-			String SQL = "select max(student_id) from batching";
-			ResultSet rs = stmt.executeQuery(SQL);
-			int MAXVALUE = 0;
-			while (rs.next()) {
-				MAXVALUE = rs.getInt(1);
-			}
-			int i = 0;
-			PreparedStatement pstmt = oraCon.prepareStatement("select * from batching where student_id = ?");
-			while (i < 10000000) {
-				pstmt.setInt(1, OraRandom.randomUniformInt(MAXVALUE));
-				pstmt.addBatch();
-				if (i%1000 == 0 ) {
-					pstmt.executeBatch();
-				}
-				i++;
-			}
-			pstmt.executeBatch();
-			pstmt.close();
-			stmt.close();
-			oraCon.close();
-		}
-		catch(Exception E) {
-			E.printStackTrace();
-		}
-	}
-	
+
 	
 	void insertLoad() {
 		try {
 			Connection oraCon = DBConnection.getOraConn();
+			System.out.println("Started insert Load " + Thread.currentThread().getName());
 			PreparedStatement pstmt = oraCon.prepareStatement("insert into batching(student_id,dept_id,mark1, mark2,mark3) values (?,?,?,?,?)");
 			int i = 1;
 			while (i < 1000000) {
@@ -148,6 +122,7 @@ public class Batching {
 			stmt.execute(SQL);
 			SQL = "create index mark3_idx on batching(mark3)";
 			stmt.execute(SQL);
+			System.out.println("Created Table and its dependent structures");
 		}
 		catch(Exception E) {
 			E.printStackTrace();
