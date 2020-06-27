@@ -1,8 +1,24 @@
 package Generic;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class oraSequence {
-	static volatile int value = 0;
-	public synchronized static int nextVal() {
+	static int value = 0;
+	static ReentrantLock a = new ReentrantLock();
+	public  static int nextVal() {
+		try {
+			a.lock();
+			value = value + 1;
+			return value;
+		}
+		catch(Exception E) {
+			
+		}
+		finally {
+			a.unlock();
+			
+		}
+		
 		value++;
 		return value;
 	}

@@ -1,8 +1,12 @@
 package Generic;
 
+
+import IndexScan.ClusteringFactor;
+
+
 public class Start {
 	public static void main(String[] args) {
-		Batching a = new Batching();
-		a.updateLoad();
+		ClusteringFactor a = new ClusteringFactor();
+		a.runBatchLoad();
 	}
 }

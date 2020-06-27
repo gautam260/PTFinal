@@ -1,4 +1,4 @@
-package Generic;
+package IndexScan;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,11 +6,15 @@ import java.sql.Statement;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import Generic.DBConnection;
+import Generic.OraRandom;
+
 public class ClusteringFactor {
 
 	@SuppressWarnings("static-access")
 	public void runBatchLoad() {
 		try {
+			createTable();
 			ExecutorService asd = Executors.newFixedThreadPool(10);
 			int i = 0;
 			while (i < 10) {
@@ -33,6 +37,7 @@ public class ClusteringFactor {
 	@SuppressWarnings("static-access")
 	public void runClassicLoad() {
 		try {
+			createTable();
 			ExecutorService asd = Executors.newFixedThreadPool(10);
 			int i = 0;
 			while (i < 10) {
@@ -58,9 +63,9 @@ public class ClusteringFactor {
 				Connection oraCon = DBConnection.getOraConn();
 				PreparedStatement pstmt = oraCon.prepareStatement("insert into clustering(student_id, dept_id, marks) values (ora.nextval, ?,?)");
 				int i = 0;
-				while (i < 5000) {
+				while (i < 50000) {
 					pstmt.setInt(1, OraRandom.randomUniformInt(100));
-					pstmt.setInt(1, OraRandom.randomSkewInt(100));
+					pstmt.setInt(2, OraRandom.randomSkewInt(100));
 					pstmt.addBatch();
 					if (i/100 == 0) {
 						pstmt.executeBatch();
@@ -81,12 +86,13 @@ public class ClusteringFactor {
 	class ClassicLoad implements Runnable{
 		public void run() {
 			try {
+				
 				Connection oraCon = DBConnection.getOraConn();
 				PreparedStatement pstmt = oraCon.prepareStatement("insert into clustering(student_id, dept_id, marks) values (ora.nextval, ?,?)");
 				int i = 0;
-				while (i < 5000) {
+				while (i < 50000) {
 					pstmt.setInt(1, OraRandom.randomUniformInt(100));
-					pstmt.setInt(1, OraRandom.randomSkewInt(100));
+					pstmt.setInt(2, OraRandom.randomSkewInt(100));
 					pstmt.executeUpdate();
 					i++;
 				}
