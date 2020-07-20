@@ -1,10 +1,10 @@
 package Generic;
 
-import IndexScan.ClusteringFactor;
+import IndexScan.IndexCreation;
 
 public class Start {
 	public static void main(String[] args) {
-		ClusteringFactor a = new ClusteringFactor();
+		IndexCreation a = new IndexCreation(245);
 		a.run();
 	}
 }
